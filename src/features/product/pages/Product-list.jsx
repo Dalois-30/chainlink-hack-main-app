@@ -7,8 +7,8 @@ import { TransactionContext } from "../../../shared/context/TransactionContext"
 
 import axios from 'axios';
 
-const useProducts = (page, limit) => {
-  const [data, setData] = useState(null);
+const useProducts = () => {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,16 +17,16 @@ const useProducts = (page, limit) => {
       try {
         const response = await axios.get(`https://chainlink-backend.daltek.tech/products/get-all`, {
           params: {
-            page: page,
-            limit: limit
+            page: 0,
+            limit: 1
           }
         });
 
-        if (response.data.statusCode === 400) {
-          setError(response.data.message);
-          console.error("Error:", response.data.message);
+        if (response.statusCode === 400) {
+          setError(response.message);
+          console.error("Error:", response.message);
         } else {
-          setData(response.data.data);
+          setData(response.data);
           console.log("Success");
         }
       } catch (error) {
@@ -43,12 +43,14 @@ const useProducts = (page, limit) => {
     };
 
     fetchData();
-  }, [page, limit]);
+  });
 
   return { data, loading, error };
 };
 
 const ProductList = () => {
+
+  const { data, loading } = useProducts();
   
   const { connectWallet, currentAccount } = useContext(TransactionContext)
   const [products, setProducts] = useState([]);
@@ -182,30 +184,30 @@ const ProductList = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {loadingIndicator ? (
+                {loading ? (
                   <tr>
                     <td colSpan="8" className="text-center py-4">Loading...</td>
                   </tr>
                 ) : (
-                  filteredProduct.map((product) => (
-                    <tr key={product.id}>
+                  data.map((product) => (
+                    <tr key={product?.product?.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <img src={product.image} alt="Profile" className="w-16 h-16 rounded-full" />
+                        <img src={product?.image} alt="Profile" className="w-16 h-16 rounded-full" />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <Link to={`/products/${product.id}`} className="text-indigo-600 hover:underline">
-                          {product.id.slice(0, 8)}
+                        <Link to={`/products/${product?.product?.id}`} className="text-indigo-600 hover:underline">
+                          {product?.product?.id.slice(0, 8)}
                         </Link>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{product.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{product.description}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{product.stock}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{new Date(product.created_at).toLocaleString('en-GB')}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{new Date(product.updated_at).toLocaleString('en-GB')}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{product?.product?.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{product?.product?.description}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{product?.product?.stock}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{new Date(product?.product?.created_at).toLocaleString('en-GB')}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{new Date(product?.product?.updated_at).toLocaleString('en-GB')}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           className="text-indigo-600 hover:text-indigo-900"
-                          onClick={() => viewDetails(product.id)}
+                          onClick={() => viewDetails(product?.product?.id)}
                         >
                           <i className="fas fa-eye"></i>Voir
                         </button>
