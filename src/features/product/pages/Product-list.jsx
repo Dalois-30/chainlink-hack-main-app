@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'tailwindcss/tailwind.css';
 import { Navbar } from '../../../shared/components';
 import { TransactionContext } from "../../../shared/context/TransactionContext";
-import useFetchProducts from '../hooks/useFetchAllProducts.jsx';
+import useFetchProducts from '../hooks/useFetch.jsx';
 
 const ProductList = () => {
   const { connectWallet, currentAccount } = useContext(TransactionContext);
