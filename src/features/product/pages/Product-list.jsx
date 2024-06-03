@@ -7,6 +7,7 @@ import useFetchProducts from '../hooks/useFetchAllProducts.jsx';
 
 const ProductList = () => {
   const { connectWallet, currentAccount } = useContext(TransactionContext);
+
   const [searchText, setSearchText] = useState('');
   const navigate = useNavigate();
   
@@ -80,7 +81,6 @@ const ProductList = () => {
               </div>
             </div>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {error ? (
               <div className="col-span-full text-center py-4">Error: {error}</div>
@@ -110,6 +110,7 @@ const ProductList = () => {
                 </div>
               ))
             )}
+
           </div>
         </div>
       )}
